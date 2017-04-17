@@ -8,6 +8,6 @@ public interface ParserService {
 
   ExchangeRatesDto getExchangeRatesFromNBP(NBPResponseDto nbpResponseDto);
 
-  ExchangeRatesDto getExchangeRatesFromECB(ECBResponseDto ecbResponseDto);
+  ExchangeRatesDto getExchangeRatesFromECB(ECBResponseDto ecbResponseDto, String targetCurrency);
 
 }

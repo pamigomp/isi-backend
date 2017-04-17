@@ -4,6 +4,7 @@ import static com.pwr.isi.project.service.enums.BaseCurrency.EUR;
 import static com.pwr.isi.project.service.enums.BaseCurrency.PLN;
 
 import com.pwr.isi.project.service.dto.ecb.ECBResponseDto;
+import com.pwr.isi.project.service.dto.ecb.ObsDto;
 import com.pwr.isi.project.service.dto.exchange.rates.CurrencyDataDto;
 import com.pwr.isi.project.service.dto.exchange.rates.ExchangeRatesDto;
 import com.pwr.isi.project.service.dto.nbp.NBPRateDto;
@@ -22,8 +23,19 @@ public class ParserServiceImpl implements ParserService {
   }
 
   @Override
-  public ExchangeRatesDto getExchangeRatesFromECB(ECBResponseDto ecbResponseDto) {
-    return buildExchangeRates(EUR.toString(), null, null);
+  public ExchangeRatesDto getExchangeRatesFromECB(ECBResponseDto ecbResponseDto, String targetCurrency) {
+    return buildExchangeRates(EUR.toString(), targetCurrency, buildCurrencyDataListFromECB(ecbResponseDto.getDataSet().getSeries().getObs()));
+  }
+
+  private List<CurrencyDataDto> buildCurrencyDataListFromECB(List<ObsDto> obs) {
+    List<CurrencyDataDto> currenciesData = new LinkedList<>();
+    for (ObsDto obsDto : obs) {
+      currenciesData.add(CurrencyDataDto.builder()
+          .effectiveDate(obsDto.getObsDimension().getValue())
+          .value(Double.parseDouble(obsDto.getObsValue().getValue()))
+          .build());
+    }
+    return currenciesData;
   }
 
   private List<CurrencyDataDto> buildCurrencyDataListFromNBP(List<NBPRateDto> rates) {

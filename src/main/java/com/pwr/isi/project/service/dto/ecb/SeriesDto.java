@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class SeriesDto {
 
-  public Object SeriesKey;
   @JsonProperty("Obs")
-  public ObsDto obs;
+  public List<ObsDto> obs;
 }
