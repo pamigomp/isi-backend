@@ -1,4 +1,4 @@
-package com.example.service.dto.exchange.rates;
+package com.pwr.isi.project.service.dto.exchange.rates;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

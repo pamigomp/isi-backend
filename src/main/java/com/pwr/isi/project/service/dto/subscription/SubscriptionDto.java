@@ -1,6 +1,6 @@
-package com.example.service.dto.subscription;
+package com.pwr.isi.project.service.dto.subscription;
 
-import com.example.service.enums.FrequencyValue;
+import com.pwr.isi.project.service.enums.FrequencyValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

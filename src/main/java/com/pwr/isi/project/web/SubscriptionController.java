@@ -1,6 +1,6 @@
-package com.example.web;
+package com.pwr.isi.project.web;
 
-import com.example.service.dto.subscription.SubscriptionDto;
+import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/exchange/v1")
-public class EmailRegistrationController {
+public class SubscriptionController {
 
   private final String RegistrationUrlBase = "/emailServices";
 

@@ -1,4 +1,4 @@
-package com.example.service.enums;
+package com.pwr.isi.project.service.enums;
 
 public enum FrequencyValue {
   DAILY,

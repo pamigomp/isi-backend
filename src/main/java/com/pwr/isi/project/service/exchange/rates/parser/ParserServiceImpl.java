@@ -1,11 +1,13 @@
-package com.example.service.exchange.rates.parser;
+package com.pwr.isi.project.service.exchange.rates.parser;
 
-import static com.example.service.enums.BaseCurrency.PLN;
+import static com.pwr.isi.project.service.enums.BaseCurrency.EUR;
+import static com.pwr.isi.project.service.enums.BaseCurrency.PLN;
 
-import com.example.service.dto.exchange.rates.CurrencyDataDto;
-import com.example.service.dto.exchange.rates.ExchangeRatesDto;
-import com.example.service.dto.nbp.NBPRateDto;
-import com.example.service.dto.nbp.NBPResponseDto;
+import com.pwr.isi.project.service.dto.ecb.ECBResponseDto;
+import com.pwr.isi.project.service.dto.exchange.rates.CurrencyDataDto;
+import com.pwr.isi.project.service.dto.exchange.rates.ExchangeRatesDto;
+import com.pwr.isi.project.service.dto.nbp.NBPRateDto;
+import com.pwr.isi.project.service.dto.nbp.NBPResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -16,10 +18,15 @@ public class ParserServiceImpl implements ParserService {
 
   @Override
   public ExchangeRatesDto getExchangeRatesFromNBP(NBPResponseDto nbpResponseDto) {
-    return buildExchangeRates(PLN.toString(), nbpResponseDto.getCode(), buildCurrencyDataList(nbpResponseDto.getRates()));
+    return buildExchangeRates(PLN.toString(), nbpResponseDto.getCode(), buildCurrencyDataListFromNBP(nbpResponseDto.getRates()));
   }
 
-  private List<CurrencyDataDto> buildCurrencyDataList(List<NBPRateDto> rates) {
+  @Override
+  public ExchangeRatesDto getExchangeRatesFromECB(ECBResponseDto ecbResponseDto) {
+    return buildExchangeRates(EUR.toString(), null, null);
+  }
+
+  private List<CurrencyDataDto> buildCurrencyDataListFromNBP(List<NBPRateDto> rates) {
     List<CurrencyDataDto> currenciesData = new LinkedList<>();
     for (NBPRateDto nbpRate : rates) {
       currenciesData.add(CurrencyDataDto.builder()

@@ -1,4 +1,4 @@
-package com.example.service.dto.nbp;
+package com.pwr.isi.project.service.dto.nbp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
