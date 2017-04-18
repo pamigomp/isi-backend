@@ -16,9 +16,9 @@ public class SubscriptionController {
   private final String RegistrationUrlBase = "/emailServices";
 
 
-  @RequestMapping(value = RegistrationUrlBase, method = RequestMethod.POST)
+  @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> registerEmail(@RequestBody SubscriptionDto emailDto) {
+  public ResponseEntity<String> subscribeUser(@RequestBody SubscriptionDto emailDto) {
     //TODO save emailServices in database
     //There will be thrown response with code 400 if e.g email doesn't meet criteria
 
