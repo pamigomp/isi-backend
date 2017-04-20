@@ -1,6 +1,12 @@
 package com.pwr.isi.project.web;
 
+import static org.springframework.http.ResponseEntity.badRequest;
+import static org.springframework.http.ResponseEntity.ok;
+
 import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
+import com.pwr.isi.project.service.exception.DataConflictException;
+import com.pwr.isi.project.service.subscription.SubscriptionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,15 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/exchange/v1")
 public class SubscriptionController {
 
-  private final String RegistrationUrlBase = "/emailServices";
+  private static final String SUCCESS_MESSAGE = "User %s was subscribed correctly!";
 
+  private SubscriptionService subscriptionService;
+
+  @Autowired
+  public SubscriptionController(SubscriptionService subscriptionService) {
+    this.subscriptionService = subscriptionService;
+  }
 
   @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> subscribeUser(@RequestBody SubscriptionDto emailDto) {
-    //TODO save emailServices in database
-    //There will be thrown response with code 400 if e.g email doesn't meet criteria
-
-    return new ResponseEntity<>(emailDto.email + "Sucess!", HttpStatus.CREATED);
+  public ResponseEntity subscribeUser(@RequestBody SubscriptionDto subscription) {
+    try {
+      subscriptionService.saveSubscription(subscription);
+    } catch (DataConflictException e) {
+      return badRequest().body(e.getMessage());
+    }
+    return ok().body(String.format(SUCCESS_MESSAGE, subscription.getEmail()));
   }
 }

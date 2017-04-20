@@ -13,9 +13,5 @@ import java.util.List;
 public class SubscriptionDto {
   public String email;
   public List<String> subscribedCurrencies;
-  public SubsciptionFrequency subsciptionFrequency;
-
-  public class SubsciptionFrequency {
-    public FrequencyValue frequencyValue;
-  }
+  public FrequencyValue subsciptionFrequency;
 }

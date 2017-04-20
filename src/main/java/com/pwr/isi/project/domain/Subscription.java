@@ -1,7 +1,9 @@
 package com.pwr.isi.project.domain;
 
+import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
 import com.pwr.isi.project.service.enums.FrequencyValue;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +14,11 @@ import javax.persistence.PreUpdate;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @Entity(name = "SUBSCRIPTIONS")
 @Getter
-public class Subscriptions implements Serializable {
+@NoArgsConstructor
+public class Subscription implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -33,10 +35,16 @@ public class Subscriptions implements Serializable {
   @Column(name = "CURRENCIES", nullable = false)
   private String currencies;
 
-  public Subscriptions(String email, FrequencyValue frequency, String currencies) {
+  public Subscription(String email, FrequencyValue frequency, String currencies) {
     this.email = email;
     this.frequency = frequency.toString();
     this.currencies = currencies;
+  }
+
+  public Subscription(SubscriptionDto subscriptionDto) {
+    this.email = subscriptionDto.getEmail();
+    this.frequency = subscriptionDto.getSubsciptionFrequency().name();
+    this.currencies = String.join(",", subscriptionDto.getSubscribedCurrencies());
   }
 
   @Override
@@ -50,7 +58,7 @@ public class Subscriptions implements Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    Subscriptions other = (Subscriptions) obj;
+    Subscription other = (Subscription) obj;
     if (id == null) {
       if (other.id != null) {
         return false;

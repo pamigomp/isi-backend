@@ -56,12 +56,12 @@ public class ExchangeRatesController {
   public ExchangeRatesDto getCurrencyFromECB(@RequestParam("currency") String currency,
                                              @RequestParam("startDate") String startDate,
                                              @RequestParam("endDate") String endDate) {
-    ECBResponseDto ecbResponse = restTemplate.getForObject(
+    Object ecbResponse = restTemplate.getForObject(
         String.format(ECB_URL_PATTERN, currency, startDate, endDate),
-        ECBResponseDto.class);
+        Object.class);
 
-    log.info(ecbResponse.toString());
+    log.info(ecbResponse.toString()); //TODO: make it fucking work
 
-    return parserService.getExchangeRatesFromECB(ecbResponse, currency);
+    return parserService.getExchangeRatesFromECB(null, currency);
   }
 }

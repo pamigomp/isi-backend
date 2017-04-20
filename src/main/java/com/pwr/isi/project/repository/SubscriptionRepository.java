@@ -1,14 +1,14 @@
 package com.pwr.isi.project.repository;
 
-import com.pwr.isi.project.domain.Subscriptions;
+import com.pwr.isi.project.domain.Subscription;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface SubscriptionRepository extends CrudRepository<Subscriptions, Long> {
+public interface SubscriptionRepository extends CrudRepository<Subscription, Long> {
 
-  Optional<Subscriptions> findByEmail(String email);
+  Optional<Subscription> findByEmail(String email);
 
 }
