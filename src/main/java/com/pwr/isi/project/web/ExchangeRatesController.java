@@ -53,15 +53,15 @@ public class ExchangeRatesController {
    * @param endDate   yyyy-mm-dd - cannot be in the future
    */
   @RequestMapping(value = "/ecb/exchange_rates", method = RequestMethod.GET)
-  public ExchangeRatesDto getCurrencyFromECB(@RequestParam("currency") String currency,
+  public Object getCurrencyFromECB(@RequestParam("currency") String currency,
                                              @RequestParam("startDate") String startDate,
                                              @RequestParam("endDate") String endDate) {
-    Object ecbResponse = restTemplate.getForObject(
+    String ecbResponse = restTemplate.getForObject(
         String.format(ECB_URL_PATTERN, currency, startDate, endDate),
-        Object.class);
+        String.class);
 
-    log.info(ecbResponse.toString()); //TODO: make it fucking work
+    log.info(ecbResponse);
 
-    return parserService.getExchangeRatesFromECB(null, currency);
+    return parserService.getExchangeRatesFromECB(ecbResponse, currency);
   }
 }
