@@ -13,7 +13,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity(name = "SUBSCRIPTIONS")
 @Getter
@@ -25,9 +27,9 @@ public class Subscription implements Serializable {
   @GeneratedValue
   private Long id;
   @Column(name = "TECH_CREATION_TIME")
-  private ZonedDateTime creationTime;
+  private Date creationTime;
   @Column(name = "TECH_UPDATE_TIME")
-  private ZonedDateTime updateTime;
+  private Date updateTime;
   @Column(name = "EMAIL", nullable = false)
   private String email;
   @Column(name = "FREQUENCY", nullable = false)
@@ -82,12 +84,12 @@ public class Subscription implements Serializable {
 
   @PrePersist
   protected void onCreate() {
-    creationTime = ZonedDateTime.now();
-    updateTime = ZonedDateTime.now();
+    creationTime = Date.from(Instant.now());
+    updateTime = Date.from(Instant.now());
   }
 
   @PreUpdate
   protected void onUpdate() {
-    updateTime = ZonedDateTime.now();
+    updateTime = Date.from(Instant.now());
   }
 }

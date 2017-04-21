@@ -3,10 +3,13 @@ package com.pwr.isi.project.web;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
+import com.pwr.isi.project.domain.Subscription;
 import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
 import com.pwr.isi.project.service.exception.DataConflictException;
 import com.pwr.isi.project.service.subscription.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,5 +40,13 @@ public class SubscriptionController {
       return badRequest().body(e.getMessage());
     }
     return ok().body(String.format(SUCCESS_MESSAGE, subscription.getEmail()));
+  }
+
+  /**
+   * @param pageRequest page, size, sort
+   */
+  @RequestMapping(value = "/subscriptions", method = RequestMethod.GET)
+  public Page<Subscription> getAllSubscriptions(Pageable pageRequest) {
+    return subscriptionService.getAllSubscriptions(pageRequest);
   }
 }

@@ -8,6 +8,8 @@ import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
 import com.pwr.isi.project.service.exception.DataConflictException;
 import com.pwr.isi.project.service.exception.UnprocessedEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     Optional<Subscription> savedSubscription = subscriptionRepository.findByEmail(subscription.getEmail());
     if (savedSubscription.isPresent() || !isSubscriptionValid(subscription)) throw new DataConflictException();
     subscriptionRepository.save(new Subscription(subscription));
+  }
+
+  @Override
+  public Page<Subscription> getAllSubscriptions(Pageable pageRequest) {
+    return subscriptionRepository.findAll(pageRequest);
   }
 
   private Boolean isSubscriptionValid(SubscriptionDto subscription) {
