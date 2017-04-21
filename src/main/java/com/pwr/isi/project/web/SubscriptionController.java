@@ -31,6 +31,9 @@ public class SubscriptionController {
     this.subscriptionService = subscriptionService;
   }
 
+  /**
+   * @param subscription subscriptionDto
+   */
   @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity subscribeUser(@RequestBody SubscriptionDto subscription) {

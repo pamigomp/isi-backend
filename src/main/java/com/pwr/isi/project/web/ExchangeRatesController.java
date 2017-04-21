@@ -1,12 +1,9 @@
 package com.pwr.isi.project.web;
 
-import static com.pwr.isi.project.service.URL.URLContainer.ECB_URL_PATTERN;
-import static com.pwr.isi.project.service.URL.URLContainer.NBP_URL_PATTERN;
-
 import com.pwr.isi.project.service.dto.exchange.rates.ExchangeRatesDto;
 import com.pwr.isi.project.service.dto.exchange.rates.ExchangeRatesPageableDto;
-import com.pwr.isi.project.service.dto.nbp.NBPResponseDto;
 import com.pwr.isi.project.service.exchange.rates.parser.ParserService;
+import com.pwr.isi.project.service.external.ExternalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -14,17 +11,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/exchange/v1")
 public class ExchangeRatesController {
 
-  @Autowired
   private ParserService parserService;
+  private ExternalService externalService;
 
-  private RestTemplate restTemplate = new RestTemplate();
+  @Autowired
+  public ExchangeRatesController(ParserService parserService, ExternalService externalService) {
+    this.parserService = parserService;
+    this.externalService = externalService;
+  }
 
   //TODO: add validation
 
@@ -37,13 +37,7 @@ public class ExchangeRatesController {
   public ExchangeRatesDto getCurrencyFromNBP(@RequestParam("currency") String currency,
                                              @RequestParam("startDate") String startDate,
                                              @RequestParam("endDate") String endDate) {
-    NBPResponseDto nbpResponse = restTemplate.getForObject(
-        String.format(NBP_URL_PATTERN, currency, startDate, endDate),
-        NBPResponseDto.class);
-
-    log.info(nbpResponse.toString());
-
-    return parserService.getExchangeRatesFromNBP(nbpResponse);
+    return parserService.getExchangeRatesFromNBP(externalService.getExchangeRatesFromNBP(currency, startDate, endDate));
   }
 
   //TODO: add validation
@@ -59,13 +53,7 @@ public class ExchangeRatesController {
                                                              @RequestParam("startDate") String startDate,
                                                              @RequestParam("endDate") String endDate,
                                                              Pageable pageRequest) {
-    NBPResponseDto nbpResponse = restTemplate.getForObject(
-        String.format(NBP_URL_PATTERN, currency, startDate, endDate),
-        NBPResponseDto.class);
-
-    log.info(nbpResponse.toString());
-
-    return parserService.getExchangeRatesFromNBP(nbpResponse, pageRequest);
+    return parserService.getExchangeRatesFromNBP(externalService.getExchangeRatesFromNBP(currency, startDate, endDate), pageRequest);
   }
 
   //TODO: add validation
@@ -79,13 +67,7 @@ public class ExchangeRatesController {
   public Object getCurrencyFromECB(@RequestParam("currency") String currency,
                                    @RequestParam("startDate") String startDate,
                                    @RequestParam("endDate") String endDate) {
-    String ecbResponse = restTemplate.getForObject(
-        String.format(ECB_URL_PATTERN, currency, startDate, endDate),
-        String.class);
-
-    log.info(ecbResponse);
-
-    return parserService.getExchangeRatesFromECB(ecbResponse);
+    return parserService.getExchangeRatesFromECB(externalService.getExchangeRatesFromECB(currency, startDate, endDate));
   }
 
   //TODO: add validation
@@ -101,12 +83,6 @@ public class ExchangeRatesController {
                                                              @RequestParam("startDate") String startDate,
                                                              @RequestParam("endDate") String endDate,
                                                              Pageable pageRequest) {
-    String ecbResponse = restTemplate.getForObject(
-        String.format(ECB_URL_PATTERN, currency, startDate, endDate),
-        String.class);
-
-    log.info(ecbResponse);
-
-    return parserService.getExchangeRatesFromECB(ecbResponse, pageRequest);
+    return parserService.getExchangeRatesFromECB(externalService.getExchangeRatesFromECB(currency, startDate, endDate), pageRequest);
   }
 }
