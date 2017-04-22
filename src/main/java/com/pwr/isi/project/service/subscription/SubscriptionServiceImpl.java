@@ -6,7 +6,10 @@ import com.pwr.isi.project.domain.Subscription;
 import com.pwr.isi.project.repository.SubscriptionRepository;
 import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
 import com.pwr.isi.project.service.exception.DataConflictException;
+import com.pwr.isi.project.service.exception.SubscriberNotFound;
 import com.pwr.isi.project.service.exception.UnprocessedEntityException;
+import com.pwr.isi.project.service.mail.MailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,16 +21,19 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
 
   public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
   private SubscriptionRepository subscriptionRepository;
+  private MailService mailService;
 
   @Autowired
-  public SubscriptionServiceImpl(SubscriptionRepository subscriptionRepository) {
+  public SubscriptionServiceImpl(SubscriptionRepository subscriptionRepository, MailService mailService) {
     this.subscriptionRepository = subscriptionRepository;
+    this.mailService = mailService;
   }
 
   @Override
@@ -41,6 +47,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   @Override
   public Page<Subscription> getAllSubscriptions(Pageable pageRequest) {
     return subscriptionRepository.findAll(pageRequest);
+  }
+
+  @Override
+  public void sendSubscription(String subscribersEmail) throws SubscriberNotFound, UnprocessedEntityException {
+    Subscription subscriberInfo = subscriptionRepository.findByEmail(subscribersEmail).orElseThrow(SubscriberNotFound::new);
+    mailService.placeOrder(subscriberInfo);
   }
 
   private Boolean isSubscriptionValid(SubscriptionDto subscription) {

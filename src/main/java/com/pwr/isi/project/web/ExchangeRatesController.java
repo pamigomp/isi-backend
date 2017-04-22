@@ -4,7 +4,6 @@ import com.pwr.isi.project.service.dto.exchange.rates.ExchangeRatesDto;
 import com.pwr.isi.project.service.dto.exchange.rates.ExchangeRatesPageableDto;
 import com.pwr.isi.project.service.exchange.rates.parser.ParserService;
 import com.pwr.isi.project.service.external.ExternalService;
-import com.pwr.isi.project.service.mail.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -20,13 +19,11 @@ public class ExchangeRatesController {
 
   private ParserService parserService;
   private ExternalService externalService;
-  private MailService mailService;
 
   @Autowired
-  public ExchangeRatesController(ParserService parserService, ExternalService externalService, MailService mailService) {
+  public ExchangeRatesController(ParserService parserService, ExternalService externalService) {
     this.parserService = parserService;
     this.externalService = externalService;
-    this.mailService = mailService;
   }
 
   //TODO: add validation
@@ -40,7 +37,6 @@ public class ExchangeRatesController {
   public ExchangeRatesDto getCurrencyFromNBP(@RequestParam("currency") String currency,
                                              @RequestParam("startDate") String startDate,
                                              @RequestParam("endDate") String endDate) {
-    mailService.placeOrder("Dupka");
     return parserService.getExchangeRatesFromNBP(externalService.getExchangeRatesFromNBP(currency, startDate, endDate));
   }
 
