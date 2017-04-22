@@ -21,14 +21,17 @@ public class XsltTransformController {
         this.xsltTransformService = xsltTransformService;
     }
 
+    /**
+     * @param currency  currency ISO 4217 code in UPPERCASE
+     * @param startDate yyyy-mm-dd - must be older than 3 day
+     * @param endDate   yyyy-mm-dd - cannot be in the future
+     */
     @RequestMapping(value = "/nbp", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity getXslt(@RequestParam("currency") String currency,
                                   @RequestParam("startDate") String startDate,
                                   @RequestParam("endDate") String endDate) {
-        String responseFromNBP = xsltTransformService.TransformNBPResponse(currency, startDate, endDate);
+        String responseFromNBP = xsltTransformService.transformNBPResponse(currency, startDate, endDate);
         return ok().body(responseFromNBP);
     }
-
-
 }
