@@ -19,8 +19,8 @@ public class ExternalServiceImpl implements ExternalService {
     }
 
     @Override
-    public String getExchangeRatesFromNBPAsXml(String currency, String startDate, String endDate, String format) {
-        return restTemplate.getForObject(String.format(NBP_URL_PATTERN, currency, startDate, endDate, format), String.class);
+    public String getExchangeRatesFromNBPAsXml(String currency, String startDate, String endDate) {
+        return restTemplate.getForObject(String.format(NBP_URL_PATTERN, currency, startDate, endDate, "xml"), String.class);
     }
 
     @Override

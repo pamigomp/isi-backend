@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 public class XsltTransformServiceImpl implements XsltTransformService {
 
     public static final String XsltFile = "nbp.xsl";
-    private static final String XmlFormat = "xml";
     private ExternalService externalService;
 
     @Autowired
@@ -20,7 +19,7 @@ public class XsltTransformServiceImpl implements XsltTransformService {
 
     @Override
     public String transformNBPResponse(String currency, String startDate, String endDate) {
-        String nbpResponse = externalService.getExchangeRatesFromNBPAsXml(currency, startDate, endDate, XmlFormat);
+        String nbpResponse = externalService.getExchangeRatesFromNBPAsXml(currency, startDate, endDate);
         log.info(nbpResponse);
         return XsltHelper.ApplyXsltTransformToXml(nbpResponse, XsltFile);
     }
