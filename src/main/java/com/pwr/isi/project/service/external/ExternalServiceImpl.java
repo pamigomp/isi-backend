@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import static com.pwr.isi.project.service.URL.URLContainer.ECB_URL_PATTERN;
 import static com.pwr.isi.project.service.URL.URLContainer.NBP_URL_PATTERN;
 import static com.pwr.isi.project.service.enums.ResponseFormat.JSON;
+import static com.pwr.isi.project.service.enums.ResponseFormat.XML;
 
 @Service
 public class ExternalServiceImpl implements ExternalService {
@@ -20,7 +21,7 @@ public class ExternalServiceImpl implements ExternalService {
 
     @Override
     public String getExchangeRatesFromNBPAsXml(String currency, String startDate, String endDate) {
-        return restTemplate.getForObject(String.format(NBP_URL_PATTERN, currency, startDate, endDate, "xml"), String.class);
+        return restTemplate.getForObject(String.format(NBP_URL_PATTERN, currency, startDate, endDate, XML.getValue()), String.class);
     }
 
     @Override
