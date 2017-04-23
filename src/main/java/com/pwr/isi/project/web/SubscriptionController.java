@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
+
 @RestController
 @RequestMapping("/api/exchange/v1")
 public class SubscriptionController {
@@ -71,6 +73,9 @@ public class SubscriptionController {
     } catch (UnprocessedEntityException e) {
       e.printStackTrace();
       return badRequest().body(e.getMessage());
+    } catch (MessagingException e) {
+      e.printStackTrace();
+      return badRequest().build();
     }
   }
 }

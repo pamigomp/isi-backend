@@ -5,9 +5,12 @@ import com.pwr.isi.project.service.exception.UnprocessedEntityException;
 import com.pwr.isi.project.service.xstl.XsltTransformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -17,22 +20,24 @@ public class MailServiceImpl implements MailService {
   @Value("${spring.mail.username}")
   private String sendersEmail;
 
-  private MailSender mailSender;
+  private JavaMailSender javaMailSender;
   private XsltTransformService xsltTransformService;
 
   @Autowired
-  public MailServiceImpl(MailSender mailSender, XsltTransformService xsltTransformService) {
-    this.mailSender = mailSender;
+  public MailServiceImpl(JavaMailSender javaMailSender, XsltTransformService xsltTransformService) {
+    this.javaMailSender = javaMailSender;
     this.xsltTransformService = xsltTransformService;
   }
 
   @Override
-  public void placeOrder(Subscription subscription) throws UnprocessedEntityException {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(subscription.getEmail());
-    message.setFrom(sendersEmail);
-    message.setSubject(String.format(SUBJECT, subscription.getFrequency(), subscription.getCurrencies()));
-    message.setText(xsltTransformService.createSubscriptionReport(subscription));
-    mailSender.send(message);
+  public void placeOrder(Subscription subscription) throws MessagingException, UnprocessedEntityException {
+    MimeMessage message = javaMailSender.createMimeMessage();
+    MimeMessageHelper msgHelper = new MimeMessageHelper(message, true);
+
+    msgHelper.setFrom(sendersEmail);
+    msgHelper.setTo(subscription.getEmail());
+    msgHelper.setSubject(String.format(SUBJECT, subscription.getFrequency(), subscription.getCurrencies()));
+    msgHelper.setText(xsltTransformService.createSubscriptionReport(subscription), true);
+    javaMailSender.send(message);
   }
 }

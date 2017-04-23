@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -50,7 +52,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   }
 
   @Override
-  public void sendSubscription(String subscribersEmail) throws SubscriberNotFound, UnprocessedEntityException {
+  public void sendSubscription(String subscribersEmail) throws SubscriberNotFound, UnprocessedEntityException, MessagingException {
     Subscription subscriberInfo = subscriptionRepository.findByEmail(subscribersEmail).orElseThrow(SubscriberNotFound::new);
     mailService.placeOrder(subscriberInfo);
   }
