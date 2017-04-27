@@ -1,8 +1,6 @@
 package com.pwr.isi.project.domain;
 
-import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
-import com.pwr.isi.project.service.enums.BaseCurrency;
-import com.pwr.isi.project.service.enums.FrequencyValue;
+import com.pwr.isi.project.service.dto.subscription.output.SubscriptionOutputDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +13,6 @@ import javax.persistence.PreUpdate;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity(name = "SUBSCRIPTIONS")
@@ -36,22 +33,15 @@ public class Subscription implements Serializable {
   @Column(name = "FREQUENCY", nullable = false)
   private String frequency;
   @Column(name = "CURRENCIES", nullable = false)
-  private String currencies;
+  private String targetCurrency;
   @Column(name = "CURRENCY_DENOM", nullable = false)
   private String currencyDenom;
 
-  public Subscription(String email, FrequencyValue frequency, String currencies, BaseCurrency currencyDenom) {
-    this.email = email;
-    this.frequency = frequency.toString();
-    this.currencies = currencies;
-    this.currencyDenom = currencyDenom.name();
-  }
-
-  public Subscription(SubscriptionDto subscriptionDto) {
-    this.email = subscriptionDto.getEmail();
-    this.frequency = subscriptionDto.getSubsciptionFrequency().name();
-    this.currencies = String.join(",", subscriptionDto.getSubscribedCurrencies());
-    this.currencyDenom = subscriptionDto.getCurrencyDenom().name();
+  public Subscription(SubscriptionOutputDto subscription) {
+    this.email = subscription.getEmail();
+    this.frequency = subscription.getPeriod().name();
+    this.targetCurrency = subscription.getTargetCurrency().name();
+    this.currencyDenom = subscription.getBaseCurrency().name();
   }
 
   @Override

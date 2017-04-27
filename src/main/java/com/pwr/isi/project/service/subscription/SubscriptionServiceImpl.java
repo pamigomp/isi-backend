@@ -1,10 +1,10 @@
 package com.pwr.isi.project.service.subscription;
 
-import static com.pwr.isi.project.service.enums.SubscriptionCurrency.isCurrencyValid;
-
 import com.pwr.isi.project.domain.Subscription;
 import com.pwr.isi.project.repository.SubscriptionRepository;
-import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
+import com.pwr.isi.project.service.dto.subscription.input.CurrencyDto;
+import com.pwr.isi.project.service.dto.subscription.input.SubscriptionDto;
+import com.pwr.isi.project.service.dto.subscription.output.SubscriptionOutputDto;
 import com.pwr.isi.project.service.exception.DataConflictException;
 import com.pwr.isi.project.service.exception.SubscriberNotFound;
 import com.pwr.isi.project.service.exception.UnprocessedEntityException;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-  public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
   private SubscriptionRepository subscriptionRepository;
   private MailService mailService;
@@ -41,9 +42,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   @Override
   @Transactional(rollbackFor = UnprocessedEntityException.class)
   public void saveSubscription(SubscriptionDto subscription) throws DataConflictException {
-    Optional<Subscription> savedSubscription = subscriptionRepository.findByEmail(subscription.getEmail());
-    if (savedSubscription.isPresent() || !isSubscriptionValid(subscription)) throw new DataConflictException();
-    subscriptionRepository.save(new Subscription(subscription));
+    if (!isSubscriptionValid(subscription)) throw new DataConflictException();
+    for (SubscriptionOutputDto subscriptionOutputDto : transformSubscriptionDto(subscription)) {
+      Optional<Subscription> savedSubscription = subscriptionRepository.findByEmailAndTargetCurrency(subscription.getEmail(), subscriptionOutputDto.getTargetCurrency().name());
+      if (savedSubscription.isPresent()) continue;
+      subscriptionRepository.save(new Subscription(subscriptionOutputDto));
+    }
   }
 
   @Override
@@ -58,7 +62,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   }
 
   private Boolean isSubscriptionValid(SubscriptionDto subscription) {
-    return isEmailValid(subscription.getEmail()) && areCurrenciesValid(subscription.getSubscribedCurrencies());
+    return isEmailValid(subscription.getEmail());
   }
 
   private Boolean isEmailValid(String email) {
@@ -66,11 +70,17 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     return matcher.find();
   }
 
-  private Boolean areCurrenciesValid(List<String> currencies) {
-    for (String currency : currencies) {
-      if (!isCurrencyValid(currency)) return false;
+  private List<SubscriptionOutputDto> transformSubscriptionDto(SubscriptionDto subscriptionDto) {
+    List<SubscriptionOutputDto> subscriptionOutputDtos = new LinkedList<>();
+    for (CurrencyDto currencyDto : subscriptionDto.getCurrencies()) {
+      subscriptionOutputDtos.add(SubscriptionOutputDto.aSubscription()
+          .email(subscriptionDto.getEmail())
+          .targetCurrency(currencyDto.getTargetCurrencyCode())
+          .baseCurrency(currencyDto.getBaseCurrencyCode())
+          .period(subscriptionDto.getPeriod())
+          .build());
     }
-    return true;
+    return subscriptionOutputDtos;
   }
 
 }

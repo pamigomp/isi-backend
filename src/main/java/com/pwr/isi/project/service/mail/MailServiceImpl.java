@@ -36,7 +36,7 @@ public class MailServiceImpl implements MailService {
 
     msgHelper.setFrom(sendersEmail);
     msgHelper.setTo(subscription.getEmail());
-    msgHelper.setSubject(String.format(SUBJECT, subscription.getFrequency(), subscription.getCurrencies()));
+    msgHelper.setSubject(String.format(SUBJECT, subscription.getFrequency(), subscription.getTargetCurrency()));
     msgHelper.setText(xsltTransformService.createSubscriptionReport(subscription), true);
     javaMailSender.send(message);
   }

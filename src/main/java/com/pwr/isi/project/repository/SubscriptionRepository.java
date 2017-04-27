@@ -15,4 +15,6 @@ public interface SubscriptionRepository extends CrudRepository<Subscription, Lon
 
   Optional<Subscription> findByEmail(String email);
 
+  Optional<Subscription> findByEmailAndTargetCurrency(String email, String targetCurrency);
+
 }

@@ -1,6 +1,5 @@
-package com.pwr.isi.project.service.dto.subscription;
+package com.pwr.isi.project.service.dto.subscription.input;
 
-import com.pwr.isi.project.service.enums.BaseCurrency;
 import com.pwr.isi.project.service.enums.FrequencyValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class SubscriptionDto {
   public String email;
-  public BaseCurrency currencyDenom;
-  public List<String> subscribedCurrencies;
-  public FrequencyValue subsciptionFrequency;
+  public List<CurrencyDto> currencies;
+  public FrequencyValue period;
 }

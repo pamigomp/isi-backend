@@ -1,11 +1,14 @@
 package com.pwr.isi.project.web;
 
+import static com.pwr.isi.project.ExchangeRatesApplication.HOST_URL;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
 
 import com.pwr.isi.project.domain.Subscription;
-import com.pwr.isi.project.service.dto.subscription.SubscriptionDto;
+import com.pwr.isi.project.service.dto.error.ErrorDto;
+import com.pwr.isi.project.service.dto.subscription.input.SubscriptionDto;
 import com.pwr.isi.project.service.exception.DataConflictException;
 import com.pwr.isi.project.service.exception.SubscriberNotFound;
 import com.pwr.isi.project.service.exception.UnprocessedEntityException;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +30,7 @@ import javax.mail.MessagingException;
 
 @RestController
 @RequestMapping("/api/exchange/v1")
+@CrossOrigin(origins = HOST_URL)
 public class SubscriptionController {
 
   private static final String SUCCESS_MESSAGE = "User %s was subscribed correctly!";
@@ -41,12 +46,14 @@ public class SubscriptionController {
    * @param subscription subscriptionDto
    */
   @RequestMapping(value = "/subscribe", method = RequestMethod.POST)
-  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity subscribeUser(@RequestBody SubscriptionDto subscription) {
     try {
       subscriptionService.saveSubscription(subscription);
     } catch (DataConflictException e) {
-      return badRequest().body(e.getMessage());
+      return badRequest().body(ErrorDto.anError()
+          .statusCode(BAD_REQUEST.value())
+          .message(e.getMessage())
+          .build());
     }
     return ok().body(String.format(SUCCESS_MESSAGE, subscription.getEmail()));
   }
@@ -72,7 +79,10 @@ public class SubscriptionController {
       return notFound().build();
     } catch (UnprocessedEntityException e) {
       e.printStackTrace();
-      return badRequest().body(e.getMessage());
+      return badRequest().body(ErrorDto.anError()
+          .statusCode(BAD_REQUEST.value())
+          .message(e.getMessage())
+          .build());
     } catch (MessagingException e) {
       e.printStackTrace();
       return badRequest().build();

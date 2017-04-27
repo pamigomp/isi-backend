@@ -35,11 +35,11 @@ public class XsltTransformServiceImpl implements XsltTransformService {
   @Override
   public String createSubscriptionReport(Subscription subscription) throws UnprocessedEntityException {
     if (subscription.getCurrencyDenom().equals(PLN.name())) {
-      return transformNBPResponse(subscription.getCurrencies(),
+      return transformNBPResponse(subscription.getTargetCurrency(),
           getAnyDateFromCurrentDay(createFrequencyValue(subscription.getFrequency()).getValue()),
           getAnyDateFromCurrentDay(0));
     } else {
-      return externalService.getExchangeRatesFromECB(subscription.getCurrencies(),
+      return externalService.getExchangeRatesFromECB(subscription.getTargetCurrency(),
           getAnyDateFromCurrentDay(createFrequencyValue(subscription.getFrequency()).getValue()),
           getAnyDateFromCurrentDay(0));
     }
