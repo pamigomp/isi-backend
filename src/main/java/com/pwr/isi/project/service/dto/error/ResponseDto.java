@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder(builderMethodName = "anError")
+@Builder(builderMethodName = "aResponse")
 @AllArgsConstructor
-public class ErrorDto {
+public class ResponseDto {
   public int statusCode;
   public String message;
 }

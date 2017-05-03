@@ -1,5 +1,7 @@
 package com.pwr.isi.project.service.subscription;
 
+import static com.pwr.isi.project.ExchangeRatesApplication.listOfSupportedCurrencies;
+
 import com.pwr.isi.project.domain.Subscription;
 import com.pwr.isi.project.repository.SubscriptionRepository;
 import com.pwr.isi.project.service.dto.subscription.input.CurrencyDto;
@@ -44,7 +46,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   public void saveSubscription(SubscriptionDto subscription) throws DataConflictException {
     if (!isSubscriptionValid(subscription)) throw new DataConflictException();
     for (SubscriptionOutputDto subscriptionOutputDto : transformSubscriptionDto(subscription)) {
-      Optional<Subscription> savedSubscription = subscriptionRepository.findByEmailAndTargetCurrency(subscription.getEmail(), subscriptionOutputDto.getTargetCurrency().name());
+      Optional<Subscription> savedSubscription = subscriptionRepository.findByEmailAndTargetCurrency(subscription.getEmail(), subscriptionOutputDto.getTargetCurrency());
       if (savedSubscription.isPresent()) continue;
       subscriptionRepository.save(new Subscription(subscriptionOutputDto));
     }
@@ -62,12 +64,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   }
 
   private Boolean isSubscriptionValid(SubscriptionDto subscription) {
-    return isEmailValid(subscription.getEmail());
+    return isEmailValid(subscription.getEmail()) && isTargetCurrencyValid(subscription);
   }
 
   private Boolean isEmailValid(String email) {
     Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
     return matcher.find();
+  }
+
+  private Boolean isTargetCurrencyValid(SubscriptionDto subscription) {
+    for (CurrencyDto currencies : subscription.getCurrencies()) {
+      if (!listOfSupportedCurrencies.contains(currencies.getTargetCurrencyCode())) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private List<SubscriptionOutputDto> transformSubscriptionDto(SubscriptionDto subscriptionDto) {

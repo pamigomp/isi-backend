@@ -1,6 +1,6 @@
 package com.pwr.isi.project.service.external;
 
-import com.pwr.isi.project.service.dto.nbp.NBPResponseDto;
+import com.pwr.isi.project.service.dto.nbp.rates.NBPResponseDto;
 
 public interface ExternalService {
 

@@ -40,7 +40,7 @@ public class Subscription implements Serializable {
   public Subscription(SubscriptionOutputDto subscription) {
     this.email = subscription.getEmail();
     this.frequency = subscription.getPeriod().name();
-    this.targetCurrency = subscription.getTargetCurrency().name();
+    this.targetCurrency = subscription.getTargetCurrency();
     this.currencyDenom = subscription.getBaseCurrency().name();
   }
 

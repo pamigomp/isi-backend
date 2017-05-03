@@ -2,12 +2,13 @@ package com.pwr.isi.project.web;
 
 import static com.pwr.isi.project.ExchangeRatesApplication.HOST_URL;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
 
 import com.pwr.isi.project.domain.Subscription;
-import com.pwr.isi.project.service.dto.error.ErrorDto;
+import com.pwr.isi.project.service.dto.error.ResponseDto;
 import com.pwr.isi.project.service.dto.subscription.input.SubscriptionDto;
 import com.pwr.isi.project.service.exception.DataConflictException;
 import com.pwr.isi.project.service.exception.SubscriberNotFound;
@@ -16,14 +17,12 @@ import com.pwr.isi.project.service.subscription.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
@@ -50,12 +49,15 @@ public class SubscriptionController {
     try {
       subscriptionService.saveSubscription(subscription);
     } catch (DataConflictException e) {
-      return badRequest().body(ErrorDto.anError()
+      return badRequest().body(ResponseDto.aResponse()
           .statusCode(BAD_REQUEST.value())
           .message(e.getMessage())
           .build());
     }
-    return ok().body(String.format(SUCCESS_MESSAGE, subscription.getEmail()));
+    return ok().body(ResponseDto.aResponse()
+        .statusCode(OK.value())
+        .message(String.format(SUCCESS_MESSAGE, subscription.getEmail()))
+        .build());
   }
 
   /**
@@ -73,13 +75,16 @@ public class SubscriptionController {
   public ResponseEntity sendSubscriptionReportForGivenUser(@RequestParam("email") String email) {
     try {
       subscriptionService.sendSubscription(email);
-      return ok().body("Report sent correctly!");
+      return ok().body(ResponseDto.aResponse()
+          .statusCode(OK.value())
+          .message("Report sent correctly!")
+          .build());
     } catch (SubscriberNotFound subscriberNotFound) {
       subscriberNotFound.printStackTrace();
       return notFound().build();
     } catch (UnprocessedEntityException e) {
       e.printStackTrace();
-      return badRequest().body(ErrorDto.anError()
+      return badRequest().body(ResponseDto.aResponse()
           .statusCode(BAD_REQUEST.value())
           .message(e.getMessage())
           .build());

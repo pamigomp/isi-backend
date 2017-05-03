@@ -1,17 +1,14 @@
-package com.pwr.isi.project.service.dto.nbp;
+package com.pwr.isi.project.service.dto.nbp.table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
-public class NBPResponseDto {
-  private String table;
+public class NBPTablesRateDto {
   private String currency;
   private String code;
-  private List<NBPRateDto> rates;
+  private Double mid;
 }
